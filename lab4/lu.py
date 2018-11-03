@@ -26,9 +26,7 @@ def vector_x(U,z):
     x = np.zeros(U.shape[0])
     sum = 0
     for i in range(U.shape[0] - 1, -1, -1):
-        print("i" ,i)
         for j in range(U.shape[0] - 1,i , -1):
-            print("j",j)
             sum += U[i][j] * x[j]
         x[i] = (z[i] - sum) / U[i][i]
         sum = 0
@@ -66,7 +64,6 @@ def LU(matrix):
 def LU_method(A,B):
     c = LU(A)
     z = vector_z(c[0],B)
-    print(z)
     x = vector_x(c[1],z)
     return x
 
@@ -74,8 +71,8 @@ def main():
 
     A = np.array([[5,3,2],[1,2,0],[3,0,4]])
     B = np.array([10,5,-2])
-    LU_method(A,B)
-
+    x = LU_method(A,B)
+    print(x)
 	
 if __name__ == "__main__":
 	main()
