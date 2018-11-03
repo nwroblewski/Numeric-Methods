@@ -4,7 +4,7 @@
 import numpy as np
 
 # Mikołaj Wróblewski AGH UST 3rd year, Computer Science
-# Numerical Methods
+# Numeric Methods
 
 
 def rand_matrix(dimension):
