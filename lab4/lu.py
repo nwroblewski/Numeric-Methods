@@ -5,9 +5,26 @@ import numpy as np
 import time as t
 import random
 from math import sqrt
+from functools import reduce
 
 # Mikołaj Wróblewski AGH UST 3rd year, Computer Science
 # Numeric Methods
+
+# funkcja używana do porównywania dwóch wartości
+# z dokładnością do 1e-10
+
+def epsilon_euqals(a,b):
+    return abs(a-b) < 1e-10
+
+# funkcja używana do porówywania list wynikowych
+# !IMPORTANT - trzeba pamiętać by wynik uzyskany przez bibliotekę przekazywać jako
+# wynik.tolist() z uwagi na lekko inną reprezentację macierzy aniżeli w "czystym" pythonie
+# a , b - listy wynikowe
+# zwraca true, jeżeli porównanie odpowiadających sobie indeksów jest równe z dokładnością
+# do stałego epsilon
+
+def compare_solutions(a,b):
+    return reduce(lambda x,y: x and y,(list(map(lambda x,y: epsilon_euqals(x,y),a,b))))
 
 # Eliminacja Gaussa z częściowym piwotowaniem - żeby skorzystać z macierz z numpy wywołujemy:
 # gauss_w_swaps(macierz_z_numpy.tolist()) i będzie działało poprawnie
@@ -53,7 +70,7 @@ def random_matrix(n,left,right):
 
 # rozbija macierz z numpy na 2 macierze, macierz b i macierz x będącą ostatnią kolumną macierzy wejściowej
 def split_matrix(a):
-    x = np.zeros(a.shape[1])
+    x = np.zeros(a.shape[0])
     b = np.zeros((a.shape[0],a.shape[0]))
     for i in range(a.shape[0]):
         for j in range(a.shape[1]):
@@ -181,16 +198,61 @@ def LU(A,B,fn):
     x = vector_x(c[1],z) # backward substitution
     return x
 
+def tests_basic(fn):
+    n = 10
+    outputs = []
+    for i in range(30):
+            a = random_matrix(n,1,20)
+            b = split_matrix(a)
+            s1 = LU(b[0],b[1],fn)
+            s2 = np.linalg.solve(b[0],b[1]).tolist()
+            if compare_solutions(s1,s2) == False:
+                print("The matrix test failed")
+                return None
+            outputs += [compare_solutions(s1,s2)]
+
+    if reduce(lambda x,y: x and y,outputs) == True:
+        print("Tests passed with usage of" , fn)
+
+
+def cholesky_test():
+    A = np.array([[4,12,-16],[12,37,-43],[-16,-43,98]]) #for testing cholesky
+    L_wanted = np.array([[2,0,0],[6,1,0],[-8,5,3]])
+    L_after_cholesky = LU_decomposition_cholesky(A)[0]
+    print(L_after_cholesky == L_wanted)
+
+def performance_tests_doolittle():
+    n = 2
+    print("DOOLITTLE PERFORMANCE TEST:")
+    for i in range(2,11):
+        a = random_matrix(n ** i,1,20)
+        b = split_matrix(a)
+        t5 = t.time()
+        LU(b[0],b[1],LU_decomposition_doolitle)
+        t6 = t.time() - t5
+        print(n ** i,",",round(t6,10))
+
+
+def performance_tests_gauss():
+    n = 2
+    print("GAUSS PERFORMANCE TEST:")
+    for i in range(2,11):
+        a = random_matrix(n ** i,1,20)
+        b = split_matrix(a)
+        t5 = t.time()
+        guass_w_swaps(a)
+        t6 = t.time() - t5
+        print(n ** i,",",round(t6,10))
+
+
 def main():
-    c = np.array([[2,1,-1,8],
-    [-3,-1,2,-11],
-    [-2,1,2,-3]])
     A = np.array([[5,3,2],[1,2,0],[3,0,4]])
-    A1 = np.array([[4,12,-16],[12,37,-43],[-16,-43,98]]) #for testing cholesky
     B = np.array([10,5,-2])
-    print(guass_w_swaps(c.tolist()))
-    #tests_basic()
-	
+
+    performance_tests_doolittle()
+    performance_tests_gauss()
+
+
 if __name__ == "__main__":
 	main()
 
