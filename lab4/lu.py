@@ -215,11 +215,42 @@ def tests_basic(fn):
         print("Tests passed with usage of" , fn)
 
 
+# example matrices for testing cholesky decomposition
+
 def cholesky_test():
     A = np.array([[4,12,-16],[12,37,-43],[-16,-43,98]]) #for testing cholesky
     L_wanted = np.array([[2,0,0],[6,1,0],[-8,5,3]])
     L_after_cholesky = LU_decomposition_cholesky(A)[0]
-    print(L_after_cholesky == L_wanted)
+    m = np.array([[25, 15, -5],
+    [15, 18,  0],
+    [-5,  0, 11]])
+    print(L_after_cholesky == np.linalg.cholesky(A))
+    print(LU_decomposition_cholesky(m)[0] == np.linalg.cholesky(m))
+
+
+def performance_tests_crout():
+    n = 2
+    print("CROUT PERFORMANCE TEST:")
+    for i in range(2,11):
+        a = random_matrix(n ** i,1,20)
+        b = split_matrix(a)
+        t5 = t.time()
+        LU(b[0],b[1],LU_decomposition_crout)
+        t6 = t.time() - t5
+        print(n ** i,",",round(t6,10))
+
+
+def performance_tests_cholesky():
+    n = 2
+    print("CHOLESKY PERFORMANCE TEST:")
+    for i in range(2,11):
+        a = random_matrix(n ** i,1,20)
+        b = split_matrix(a)
+        t5 = t.time()
+        LU(b[0],b[1],LU_decomposition_cholesky)
+        t6 = t.time() - t5
+        print(n ** i,",",round(t6,10))
+
 
 def performance_tests_doolittle():
     n = 2
@@ -249,9 +280,12 @@ def main():
     A = np.array([[5,3,2],[1,2,0],[3,0,4]])
     B = np.array([10,5,-2])
 
-    performance_tests_doolittle()
-    performance_tests_gauss()
-
+    # performance_tests_doolittle()
+    # performance_tests_crout()
+    # performance_tests_gauss() 
+    # tests_basic()
+    cholesky_test()
+    # performance_tests_cholesky()
 
 if __name__ == "__main__":
 	main()
