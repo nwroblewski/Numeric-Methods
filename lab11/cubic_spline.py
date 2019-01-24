@@ -61,7 +61,7 @@ def cubic_spline(xn, a, filename):    # a = y;
 def cub_plot(a, b, c, d, x_i, x_i_1):
     root = poly1d(x_i, True)    # (x-x_i)
     poly = a + b*root + c*(root**2) + d*(root**3)
-    #tego uzywam do wpisywania do pliku, po prostu przekazuję output do pliku przez '>>'
+    #tego uzywam do wpisywania do pliku wyliczonych spline'ów, po prostu przekazuję output do pliku przez '>>'
     #print(poly)
     pts = arange(x_i, x_i_1, 0.01)
     plt.plot(pts, poly(pts), '-')
